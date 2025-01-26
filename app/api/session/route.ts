@@ -20,7 +20,9 @@ export async function POST() {
                 tool_choice: "auto",
             }),
         });
-
+        
+        //gpt-4o-realtime-preview-2024-12-17
+        //gpt-4o-mini-realtime-preview-2024-12-17
         if (!response.ok) {
             throw new Error(`API request failed with status ${JSON.stringify(response)}`);
         }

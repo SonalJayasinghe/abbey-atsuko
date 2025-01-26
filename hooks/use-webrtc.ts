@@ -10,10 +10,7 @@ export interface Tool {
   parameters?: Record<string, any>;
 }
 
-/**
- * The return type for the hook, matching Approach A
- * (RefObject<HTMLDivElement | null> for the audioIndicatorRef).
- */
+
 interface UseWebRTCAudioSessionReturn {
   status: string;
   isSessionActive: boolean;
@@ -28,15 +25,12 @@ interface UseWebRTCAudioSessionReturn {
   sendTextMessage: (text: string) => void;
 }
 
-/**
- * Hook to manage a real-time session with OpenAI's Realtime endpoints.
- */
+
 export default function useWebRTCAudioSession(
   voice: string,
   tools?: Tool[],
 ): UseWebRTCAudioSessionReturn {
-  // const { t } = useTranslations();
-  // Connection/session states
+
   const [status, setStatus] = useState("");
   const [isSessionActive, setIsSessionActive] = useState(false);
 
@@ -436,7 +430,7 @@ export default function useWebRTCAudioSession(
 
       // Send SDP offer to OpenAI Realtime
       const baseUrl = "https://api.openai.com/v1/realtime";
-      const model = "gpt-4o-realtime-preview-2024-12-17";
+      const model = "gpt-4o-mini-realtime-preview-2024-12-17";
       const response = await fetch(`${baseUrl}?model=${model}&voice=${voice}`, {
         method: "POST",
         body: offer.sdp,

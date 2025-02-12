@@ -1,9 +1,10 @@
 "use client";
 
-import React, { use, useEffect, useRef, useState } from "react";
+import React, { use, useEffect, useMemo, useRef, useState } from "react";
 import useWebRTCAudioSession from "@/hooks/use-webrtc";
 import AbbeyButton from "@/components/abbey-button";
 import { getVideoFilePathsFromAI } from "@/lib/animationSelector";
+import { videoSelector } from "@/lib/randomVideoSelector";
 
 const App: React.FC = () => {
   // State for voice selection
@@ -24,13 +25,11 @@ const App: React.FC = () => {
   const [videoIndex, setVideoIndex] = useState(0);
 
   useEffect(() => {
-    console.log("volume", currentVolume);
     const threshold = 0.0005;
-    const silenceDuration = 1500;
+    const silenceDuration = 900;
 
     if (currentVolume > threshold) {
       if (!isSpeaking) {
-        console.log("Assistant started speaking");
         setIsSpeaking(true);
       }
 
@@ -41,7 +40,6 @@ const App: React.FC = () => {
     } else {
       if (isSpeaking && !silenceTimeoutRef.current) {
         silenceTimeoutRef.current = setTimeout(() => {
-          console.log("Assistant finished speaking");
           setIsSpeaking(false);
         }, silenceDuration);
       }
@@ -53,6 +51,13 @@ const App: React.FC = () => {
       }
     }
   }, [currentVolume, conversation]);
+
+  const latestFinalUserMessage = useMemo(() => {
+    return conversation
+      .filter((msg) => msg.role === "user" && msg.isFinal)
+      .slice(-1)[0];
+  }, [conversation]);
+
 
   useEffect(() => {
     const videoElement = document.querySelector("video");
@@ -66,11 +71,14 @@ const App: React.FC = () => {
         }, 400);
       } else {
         if (isSpeaking) {
-          videoElement.classList.add("fade-out");
           setTimeout(() => {
-            setVideoSrc(["/videos/talking2.mp4", "/videos/talking3.mp4"]);
-            setVideoIndex(0);
-            videoElement.classList.remove("fade-out");
+            if(latestFinalUserMessage === undefined) return;
+              const paths = videoSelector(latestFinalUserMessage.text);
+              videoElement.classList.add("fade-out");
+              setVideoSrc(paths);
+              setVideoIndex(0);
+              videoElement.classList.remove("fade-out");
+            
           }, 400);
         } else {
           videoElement.classList.add("fade-out");
@@ -82,7 +90,7 @@ const App: React.FC = () => {
         }
       }
     }
-  }, [isSessionActive, isSpeaking]);
+  }, [isSessionActive, latestFinalUserMessage, isSpeaking]);
 
   //Play video on load
   useEffect(() => {

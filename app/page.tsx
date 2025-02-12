@@ -24,6 +24,7 @@ const App: React.FC = () => {
   const [videoIndex, setVideoIndex] = useState(0);
 
   useEffect(() => {
+    console.log("volume", currentVolume);
     const threshold = 0.0005;
     const silenceDuration = 1500;
 
@@ -45,7 +46,13 @@ const App: React.FC = () => {
         }, silenceDuration);
       }
     }
-  }, [currentVolume]);
+
+    if (conversation.length > 0) {
+      if (conversation[conversation.length - 1].role === "user") {
+        setIsSpeaking(false);
+      }
+    }
+  }, [currentVolume, conversation]);
 
   useEffect(() => {
     const videoElement = document.querySelector("video");
@@ -54,30 +61,30 @@ const App: React.FC = () => {
         videoElement.classList.add("fade-out");
         setTimeout(() => {
           setVideoSrc(["/videos/bored.mp4", "/videos/standingidle.mp4"]);
+          setVideoIndex(0);
           videoElement.classList.remove("fade-out");
         }, 400);
       } else {
-        videoElement.classList.add("fade-out");
-        setTimeout(() => {
-          setVideoSrc(["/videos/listen.mp4"]);
-          videoElement.classList.remove("fade-out");
-        }, 400);
+        if (isSpeaking) {
+          videoElement.classList.add("fade-out");
+          setTimeout(() => {
+            setVideoSrc(["/videos/talking2.mp4", "/videos/talking3.mp4"]);
+            setVideoIndex(0);
+            videoElement.classList.remove("fade-out");
+          }, 400);
+        } else {
+          videoElement.classList.add("fade-out");
+          setTimeout(() => {
+            setVideoSrc(["/videos/listen.mp4", "/videos/listen.mp4"]);
+            setVideoIndex(0);
+            videoElement.classList.remove("fade-out");
+          }, 400);
+        }
       }
     }
-    console.log(videoSrc);
-  }, [isSessionActive]);
-
-  // useEffect(() => {
-  //   if (isSpeaking && isSessionActive) {
-  //     setVideoSrc(["/videos/talking2.mp4"]);
-  //   } else if (!isSpeaking && isSessionActive) {
-  //     setVideoSrc(["/videos/listen.mp4"]);
-  //   }
-  // }, [isSpeaking]);
+  }, [isSessionActive, isSpeaking]);
 
   //Play video on load
-
-  
   useEffect(() => {
     const videoElement = document.querySelector("video");
 
@@ -94,7 +101,6 @@ const App: React.FC = () => {
   //Video transition in same video src list
   useEffect(() => {
     const videoElement = document.querySelector("video");
-
     if (videoElement) {
       videoElement.onended = () => {
         videoElement.classList.add("fade-out");

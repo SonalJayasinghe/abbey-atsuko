@@ -21,3 +21,12 @@ body {
 }
 
 
+video {
+  transition: opacity 0.4s ease;
+  opacity: 1;
+}
+video.fade-out {
+  opacity: 0.75;
+}
+
+

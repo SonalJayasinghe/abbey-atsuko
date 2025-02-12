@@ -50,9 +50,7 @@ const App: React.FC = () => {
   useEffect(() => {
     console.log("Session changed");
     if (isSessionActive === false) {
-      if (!videoSrc.includes("/videos/bored.mp4")) {
-        setVideoSrc(["/videos/bored.mp4", "/videos/standingidle.mp4"]);
-      }
+      setVideoSrc(["/videos/bored.mp4", "/videos/standingidle.mp4"]);
     } else {
       setVideoSrc(["/videos/listen.mp4"]);
     }
@@ -102,10 +100,14 @@ const App: React.FC = () => {
 
     if (videoElement) {
       videoElement.onended = () => {
-        setVideoIndex((prevIndex) => (prevIndex + 1) % videoSrc.length);
+        videoElement.classList.add("fade-out");
+        setTimeout(() => {
+          setVideoIndex((prevIndex) => (prevIndex + 1) % videoSrc.length);
+          videoElement.classList.remove("fade-out");
+        }, 400);
       };
     }
-  }, [videoSrc]);
+  });
 
   return (
     <main className="h-full">
@@ -116,7 +118,7 @@ const App: React.FC = () => {
         />
       </div>
       <div className="flex flex-col items-center gap-4">
-        <video width="1080" height="1080" autoPlay loop muted preload="auto">
+        <video width="1080" height="1080" autoPlay muted preload="auto">
           <source src={videoSrc[videoIndex]} type="video/mp4" />
           Your browser does not support the video tag.
         </video>

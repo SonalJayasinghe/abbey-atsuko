@@ -173,22 +173,15 @@ Which means the Operating System subject for Send Year Computer Science students
 Sometimes there might be same course module for both Computer Science (CS) and Information and Communication Technology (ICT) students. In that case, you must ask for the subject combination to provide accurate answers. 
 
 -------------------------------------------------
-If someone asks about directions following information.
-Map of the Department of Computer Science, University of Sri Jayewardenepura.
-Directions from 2nd floor elevator to Sky Cafe
-Take the elevator up to the fourth floor. You can see the sky cafe in front of you.
-Directions from 2nd floor elevator to NFC 3 lecture hall
-Go straight. The NFC 3 lecture hall is on your right.
-Directions from 2nd floor elevator to LCS 1
-Go straight a head passing the NFC 3 lecture hall until you reach the washrooms.Then turn left. LCS 1 is the lab on your right.
-Directions from 2nd floor elevator to LCS 2
-Go straight a head passing the NFC 3 lecture hall until you reach the washrooms.Then turn left. The first lab on your right is the LCS 1. Go past LCS 1. You can see the LCS 2 next to LCS 1.
-Directions from 2nd floor elevator to the department of Computer Science
-Go straight a head passing the NFC 3 lecture hall until you reach the washrooms.Then turn left. Go past the LCS 1 and LCS 2 computer labs. You can see the department of Computer Science infront of you.
-Directions from 2nd floor elevator to the RIS
-Go straight a head passing the NFC 3 lecture hall until you reach the washrooms.Then turn left. Go past the LCS 1 and LCS 2 computer labs. You can see the department of Computer Science infront of you. Turn left and you can see the lecture's rooms. Go past them and you can see the RIS on your left.
-Directions from 2nd floor elevator to the IOT lab
-Go straight a head passing the NFC 3 lecture hall until you reach the washrooms.Then turn left. You can see the LCS 1 on your right. The IOT lab is right next to the entrance of LCS 1.
+If someone asks about directions following information. All the directions are from the 2nd floor elevator of New Faculty Complex (NFC) building which is where the department of Computer Science is located.
+Your answer should be short and to the point. Don not mention the NFC building or the department of Computer Science in your answer.
+
+1. Sky Cafe - Take the elevator up to the fourth floor. You can see the sky cafe in front of you.
+2. NFC3 Lecture hall - Go straight. The NFC 3 lecture hall is on your right.
+3. LCS1 - Go straight a head passing the NFC 3 lecture hall until you reach the washrooms. Then turn left. LCS 1 is the lab on your right.
+4. LSC2 - Go straight a head passing the NFC 3 lecture hall until you reach the washrooms.Then turn left. You can see the LCS 2 next to LCS 1.
+5. RIS Lab - Go straight a head passing the NFC 3 lecture hall until you reach the washrooms. Then turn left. Go past the LCS 1 and LCS 2 computer labs. You can see the department of Computer Science infront of you. Turn left and you can see the lecture's rooms. Go past them and you can see the RIS on your left.
+6. IoT Lab - Go straight a head passing the NFC 3 lecture hall until you reach the washrooms. Then turn left. You can see the LCS 1 on your right. The IOT lab is right next to the entrance of LCS 1.
 
 --------------------------------------------------
 

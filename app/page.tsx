@@ -75,7 +75,7 @@ const App: React.FC = () => {
             if(latestFinalUserMessage === undefined) return;
               const paths = videoSelector(latestFinalUserMessage.text);
               videoElement.classList.add("fade-out");
-              setVideoSrc(paths);
+              setVideoSrc(paths || videoSrc);
               setVideoIndex(0);
               videoElement.classList.remove("fade-out");
             

@@ -48,53 +48,50 @@ const App: React.FC = () => {
   }, [currentVolume]);
 
   useEffect(() => {
-    console.log("Session changed");
-    if (isSessionActive === false) {
-      setVideoSrc(["/videos/bored.mp4", "/videos/standingidle.mp4"]);
-    } else {
-      setVideoSrc(["/videos/listen.mp4"]);
-    }
-  }, [isSessionActive]);
-
-  useEffect(() => {
-    if (conversation.length > 0) {
-      if (
-        conversation[conversation.length - 1].role === "assistant" &&
-        conversation[conversation.length - 1].isFinal
-      ) {
-        console.log(conversation[conversation.length - 1].text);
+    const videoElement = document.querySelector("video");
+    if (videoElement) {
+      if (isSessionActive === false) {
+        videoElement.classList.add("fade-out");
+        setTimeout(() => {
+          setVideoSrc(["/videos/bored.mp4", "/videos/standingidle.mp4"]);
+          videoElement.classList.remove("fade-out");
+        }, 400);
+      } else {
+        videoElement.classList.add("fade-out");
+        setTimeout(() => {
+          setVideoSrc(["/videos/listen.mp4"]);
+          videoElement.classList.remove("fade-out");
+        }, 400);
       }
     }
-  }, [conversation]);
+    console.log(videoSrc);
+  }, [isSessionActive]);
 
-  useEffect(() => {
-    if (isSpeaking && isSessionActive) {
-      setVideoSrc(["/videos/talking2.mp4"]);
-    } else if (!isSpeaking && isSessionActive) {
-      setVideoSrc(["/videos/listen.mp4"]);
-    }
-  }, [isSpeaking]);
+  // useEffect(() => {
+  //   if (isSpeaking && isSessionActive) {
+  //     setVideoSrc(["/videos/talking2.mp4"]);
+  //   } else if (!isSpeaking && isSessionActive) {
+  //     setVideoSrc(["/videos/listen.mp4"]);
+  //   }
+  // }, [isSpeaking]);
 
+  //Play video on load
+
+  
   useEffect(() => {
     const videoElement = document.querySelector("video");
 
     if (videoElement) {
-      console.log("Loading video");
       videoElement.load();
       const prom = videoElement.play();
 
       if (prom !== undefined) {
-        prom
-          .then(() => {
-            console.log("Video is playing");
-          })
-          .catch((error) => {
-            console.error("Error playing video", error);
-          });
+        prom.then(() => {}).catch((error) => {});
       }
     }
   }, [videoSrc, videoIndex]);
 
+  //Video transition in same video src list
   useEffect(() => {
     const videoElement = document.querySelector("video");
 

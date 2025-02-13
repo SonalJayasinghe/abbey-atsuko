@@ -37,7 +37,7 @@ const App: React.FC = () => {
       console.log("Hello Detected")
       handleStartStopClick()
       resetTranscript()
-      !isSessionActive && handleStartStopClickWithFullScreen();
+      handleFullScreen();
       setIsSessionActivating(true)
     }  
   }, [listening, transcript]);
@@ -53,7 +53,7 @@ const App: React.FC = () => {
     }
   },[])
 
-  const handleStartStopClickWithFullScreen = () => {
+  const handleFullScreen = () => {
   
   const videoElement = document.querySelector("video");
   if (videoElement) {
@@ -130,6 +130,11 @@ const App: React.FC = () => {
             videoElement.classList.remove("fade-out");
           }, 400);
         } else {
+          if(videoSrc[0] === "/videos/waving.mp4"){
+            handleStartStopClick();
+            setIsSessionActivating(false)
+            return;
+          }
           videoElement.classList.add("fade-out");
           setTimeout(() => {
             setVideoSrc(["/videos/listen.mp4", "/videos/listen.mp4"]);
@@ -155,7 +160,7 @@ const App: React.FC = () => {
     }
   }, [videoSrc, videoIndex]);
 
-  
+
 
   //Video transition in same video src list
   useEffect(() => {

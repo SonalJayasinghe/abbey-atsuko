@@ -1,14 +1,12 @@
 "use client";
 
-import React, { use, useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import useWebRTCAudioSession from "@/hooks/use-webrtc";
 import AbbeyButton from "@/components/abbey-button";
-import { getVideoFilePathsFromAI } from "@/lib/animationSelector";
 import { videoSelector } from "@/lib/randomVideoSelector";
 
 const App: React.FC = () => {
   // State for voice selection
-  const [voice, setVoice] = useState("alloy");
   const silenceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [isSpeaking, setIsSpeaking] = useState(false);
 
@@ -16,10 +14,9 @@ const App: React.FC = () => {
   const {
     isSessionActive,
     handleStartStopClick,
-    msgs,
     conversation,
     currentVolume,
-  } = useWebRTCAudioSession(voice);
+  } = useWebRTCAudioSession("alloy");
 
   const [videoSrc, setVideoSrc] = useState<string[]>(["/videos/bored.mp4"]);
   const [videoIndex, setVideoIndex] = useState(0);
@@ -101,7 +98,7 @@ const App: React.FC = () => {
       const prom = videoElement.play();
 
       if (prom !== undefined) {
-        prom.then(() => {}).catch((error) => {});
+        prom.then(() => {}).catch(() => {});
       }
     }
   }, [videoSrc, videoIndex]);

@@ -42,6 +42,9 @@ export function videoSelector(statement: string):string[] | null {
     else if (statement.toLowerCase().includes("bye")){
         return ["/videos/waving.mp4"];
     }
+    else if (statement.toLowerCase().includes("assignment")){
+        return ["/videos/tellingASecret.mp4"];
+    }
 
     return shuffleDefaultTalk();
 

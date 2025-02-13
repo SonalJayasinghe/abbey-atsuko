@@ -5,18 +5,53 @@ import useWebRTCAudioSession from "@/hooks/use-webrtc";
 import AbbeyButton from "@/components/abbey-button";
 import { videoSelector } from "@/lib/randomVideoSelector";
 
+import { useSpeechRecognition } from "react-speech-recognition";
+import SpeechRecognition from "react-speech-recognition";
+
+
 const App: React.FC = () => {
   // State for voice selection
   const silenceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [isSpeaking, setIsSpeaking] = useState(false);
+    const {
+      transcript,
+      listening,
+      resetTranscript,
+      browserSupportsSpeechRecognition,
+    } = useSpeechRecognition();
+    
+
 
   // WebRTC Audio Session Hook
   const { isSessionActive, handleStartStopClick, conversation, currentVolume } =
     useWebRTCAudioSession("alloy");
+  const [isSessionActivating, setIsSessionActivating] = useState(false);
 
   const [videoSrc, setVideoSrc] = useState<string[]>(["/videos/bored.mp4"]);
   const [videoIndex, setVideoIndex] = useState(0);
 
+
+
+  useEffect(() => {
+    if(transcript.toLowerCase().includes("hello")){
+      console.log("Hello Detected")
+      handleStartStopClick()
+      resetTranscript()
+      !isSessionActive && handleStartStopClickWithFullScreen();
+      setIsSessionActivating(true)
+    }  
+  }, [listening, transcript]);
+
+
+  useEffect(() => {
+    if(!listening){
+      SpeechRecognition.startListening({continuous: true})
+    }
+
+    if(isSessionActive){
+      SpeechRecognition.stopListening()
+    }
+  },[])
 
   const handleStartStopClickWithFullScreen = () => {
   
@@ -120,6 +155,8 @@ const App: React.FC = () => {
     }
   }, [videoSrc, videoIndex]);
 
+  
+
   //Video transition in same video src list
   useEffect(() => {
     const videoElement = document.querySelector("video");
@@ -137,14 +174,9 @@ const App: React.FC = () => {
   return (
     <main className="h-full">
       <div className=" absolute">
-        <AbbeyButton
-          isSessionActive={isSessionActive}
-          onClick={() => {
-            handleStartStopClick();
-            !isSessionActive && handleStartStopClickWithFullScreen();
-          }}
-          
-        />
+        {(isSessionActivating && !isSessionActive) &&<>
+          <h1> Starting... </h1>
+        </> }
       </div>
       <div className="flex flex-col items-center gap-4">
         <video width="1080" height="1080" autoPlay muted preload="auto">

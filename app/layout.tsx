@@ -1,6 +1,8 @@
+"use client"
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import 'regenerator-runtime/runtime'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -12,10 +14,10 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Abbey Atsuko",
-  description: "Abbey Atsuko is a virtual assistant for the Department of Computer Science at the University of Sri Jayewardenepura.",
-};
+// export const metadata: Metadata = {
+//   title: "Abbey Atsuko",
+//   description: "Abbey Atsuko is a virtual assistant for the Department of Computer Science at the University of Sri Jayewardenepura.",
+// };
 
 export default function RootLayout({
   children,

@@ -297,7 +297,7 @@ Qualifications: B.Sc.(Hons)(Computer Science)(USJ, Sri Lanka)
 Fields of Interest: Cloud Computing and Virtualization, Image Processing
 Email: tmembuldeniya@sjp.ac.lk
 
-----------------------------------------------------
+---------------------------------------------------
 
 End Goal:
 Your goal is to be helpful for students in the Computer Science Department of university of Sri Jayewardenepura.

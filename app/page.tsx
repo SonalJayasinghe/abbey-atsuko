@@ -51,7 +51,7 @@ const App: React.FC = () => {
 
   const latestFinalUserMessage = useMemo(() => {
     return conversation
-      .filter((msg) => msg.role === "user" && msg.isFinal)
+      .filter((msg) => msg.role === "user" && msg.isFinal && msg.status !=="processing")
       .slice(-1)[0];
   }, [conversation]);
 

@@ -47,7 +47,6 @@ export function videoSelector(statement: string):string[] | null {
     }
 
     return shuffleDefaultTalk();
-
 }
 
 function shuffleDefaultTalk():string[] {

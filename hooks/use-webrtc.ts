@@ -378,7 +378,12 @@ export default function useWebRTCAudioSession(
   async function startSession() {
     try {
       setStatus("Requesting microphone access...");
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: {
+        noiseSuppression: true,
+        echoCancellation: true,
+        autoGainControl: true,
+      } });
+      
       audioStreamRef.current = stream;
       setupAudioVisualization(stream);
 

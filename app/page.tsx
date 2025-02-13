@@ -7,64 +7,60 @@ import { videoSelector } from "@/lib/randomVideoSelector";
 import { useSpeechRecognition } from "react-speech-recognition";
 import SpeechRecognition from "react-speech-recognition";
 
-
 const App: React.FC = () => {
   // State for voice selection
   const silenceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [isSpeaking, setIsSpeaking] = useState(false);
-    const {
-      transcript,
-      listening,
-      resetTranscript,
-      browserSupportsSpeechRecognition,
-    } = useSpeechRecognition();
-    
+  const {
+    transcript,
+    listening,
+    resetTranscript,
+    browserSupportsSpeechRecognition,
+  } = useSpeechRecognition();
+
+  //do this with the chromium browser
   // WebRTC Audio Session Hook
   const { isSessionActive, handleStartStopClick, conversation, currentVolume } =
     useWebRTCAudioSession("alloy");
-  const [isSessionActivating, setIsSessionActivating] = useState(false);
 
   const [videoSrc, setVideoSrc] = useState<string[]>(["/videos/bored.mp4"]);
   const [videoIndex, setVideoIndex] = useState(0);
+  const [isHelloDetected, setIsHelloDetected] = useState(false);
 
   useEffect(() => {
-    if(transcript.toLowerCase().includes("hello")){
-      console.log("Hello Detected")
-      handleStartStopClick()
-      resetTranscript()
-      handleFullScreen();
-      setIsSessionActivating(true)
-    }  
+    if (transcript.toLowerCase().includes("hello")) {
+      console.log("Hello Detected");
+      handleStartStopClick();
+      resetTranscript();
+      setIsHelloDetected(true);
+    }
   }, [listening, transcript]);
 
-
   useEffect(() => {
-    if(!listening){
-      SpeechRecognition.startListening({continuous: true})
+    if (!listening) {
+      SpeechRecognition.startListening({ continuous: true });
     }
 
-    if(isSessionActive){
-      SpeechRecognition.stopListening()
+    if (isHelloDetected) {
+      SpeechRecognition.stopListening();
     }
-  },[])
+  }, []);
 
   const handleFullScreen = () => {
-  
-  const videoElement = document.querySelector("video");
-  if (videoElement) {
-    videoElement.controls = false;
-    if (videoElement.requestFullscreen) {
-      videoElement.requestFullscreen();
-    } else if ((videoElement as any).mozRequestFullScreen) { 
-      (videoElement as any).mozRequestFullScreen();
-    } else if ((videoElement as any).webkitRequestFullscreen) { 
-      (videoElement as any).webkitRequestFullscreen();
-    } else if ((videoElement as any).msRequestFullscreen) {
-      (videoElement as any).msRequestFullscreen();
+    const videoElement = document.querySelector("video");
+    if (videoElement) {
+      videoElement.controls = false;
+      if (videoElement.requestFullscreen) {
+        videoElement.requestFullscreen();
+      } else if ((videoElement as any).mozRequestFullScreen) {
+        (videoElement as any).mozRequestFullScreen();
+      } else if ((videoElement as any).webkitRequestFullscreen) {
+        (videoElement as any).webkitRequestFullscreen();
+      } else if ((videoElement as any).msRequestFullscreen) {
+        (videoElement as any).msRequestFullscreen();
+      }
     }
-  }
-};
-
+  };
 
   // volume bug here
   useEffect(() => {
@@ -125,9 +121,9 @@ const App: React.FC = () => {
             videoElement.classList.remove("fade-out");
           }, 400);
         } else {
-          if(videoSrc[0] === "/videos/waving.mp4"){
+          if (videoSrc[0] === "/videos/waving.mp4") {
             handleStartStopClick();
-            setIsSessionActivating(false)
+            setIsHelloDetected(false);
             return;
           }
           videoElement.classList.add("fade-out");
@@ -155,8 +151,6 @@ const App: React.FC = () => {
     }
   }, [videoSrc, videoIndex]);
 
-
-
   //Video transition in same video src list
   useEffect(() => {
     const videoElement = document.querySelector("video");
@@ -174,9 +168,7 @@ const App: React.FC = () => {
   return (
     <main className="h-full">
       <div className=" absolute">
-        {(isSessionActivating && !isSessionActive) &&<>
-          <h1> Starting... </h1>
-        </> }
+        <button onClick={handleFullScreen}>Full Screen</button>
       </div>
       <div className="flex flex-col items-center gap-4">
         <video width="1080" height="1080" autoPlay muted preload="auto">
@@ -189,5 +181,3 @@ const App: React.FC = () => {
 };
 
 export default App;
-
-

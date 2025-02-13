@@ -2,7 +2,6 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import useWebRTCAudioSession from "@/hooks/use-webrtc";
-import AbbeyButton from "@/components/abbey-button";
 import { videoSelector } from "@/lib/randomVideoSelector";
 
 import { useSpeechRecognition } from "react-speech-recognition";
@@ -20,8 +19,6 @@ const App: React.FC = () => {
       browserSupportsSpeechRecognition,
     } = useSpeechRecognition();
     
-
-
   // WebRTC Audio Session Hook
   const { isSessionActive, handleStartStopClick, conversation, currentVolume } =
     useWebRTCAudioSession("alloy");
@@ -29,8 +26,6 @@ const App: React.FC = () => {
 
   const [videoSrc, setVideoSrc] = useState<string[]>(["/videos/bored.mp4"]);
   const [videoIndex, setVideoIndex] = useState(0);
-
-
 
   useEffect(() => {
     if(transcript.toLowerCase().includes("hello")){

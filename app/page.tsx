@@ -11,16 +11,13 @@ const App: React.FC = () => {
   const [isSpeaking, setIsSpeaking] = useState(false);
 
   // WebRTC Audio Session Hook
-  const {
-    isSessionActive,
-    handleStartStopClick,
-    conversation,
-    currentVolume,
-  } = useWebRTCAudioSession("alloy");
+  const { isSessionActive, handleStartStopClick, conversation, currentVolume } =
+    useWebRTCAudioSession("alloy");
 
   const [videoSrc, setVideoSrc] = useState<string[]>(["/videos/bored.mp4"]);
   const [videoIndex, setVideoIndex] = useState(0);
 
+  // volume bug here
   useEffect(() => {
     const threshold = 0.0005;
     const silenceDuration = 900;
@@ -51,10 +48,12 @@ const App: React.FC = () => {
 
   const latestFinalUserMessage = useMemo(() => {
     return conversation
-      .filter((msg) => msg.role === "user" && msg.isFinal && msg.status !=="processing")
+      .filter(
+        (msg) =>
+          msg.role === "user" && msg.isFinal && msg.status !== "processing"
+      )
       .slice(-1)[0];
   }, [conversation]);
-
 
   useEffect(() => {
     const videoElement = document.querySelector("video");
@@ -69,13 +68,12 @@ const App: React.FC = () => {
       } else {
         if (isSpeaking) {
           setTimeout(() => {
-            if(latestFinalUserMessage === undefined) return;
-              const paths = videoSelector(latestFinalUserMessage.text);
-              videoElement.classList.add("fade-out");
-              setVideoSrc(paths || videoSrc);
-              setVideoIndex(0);
-              videoElement.classList.remove("fade-out");
-            
+            if (latestFinalUserMessage === undefined) return;
+            const paths = videoSelector(latestFinalUserMessage.text);
+            videoElement.classList.add("fade-out");
+            setVideoSrc(paths || videoSrc);
+            setVideoIndex(0);
+            videoElement.classList.remove("fade-out");
           }, 400);
         } else {
           videoElement.classList.add("fade-out");

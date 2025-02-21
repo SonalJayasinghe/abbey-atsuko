@@ -380,9 +380,7 @@ export default function useWebRTCAudioSession(
       setStatus("Requesting microphone access...");
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: {
-          noiseSuppression: true,
-          echoCancellation: true,
-          autoGainControl: true,
+          noiseSuppression: true,          
         }
       });
 
@@ -437,7 +435,7 @@ export default function useWebRTCAudioSession(
 
       // Send SDP offer to OpenAI Realtime
       const baseUrl = "https://api.openai.com/v1/realtime";
-      const model = "gpt-4o-realtime-preview-2024-12-17";
+      const model = "gpt-4o-mini-realtime-preview-2024-12-17";
       const response = await fetch(`${baseUrl}?model=${model}&voice=${voice}`, {
         method: "POST",
         body: offer.sdp,

@@ -378,12 +378,14 @@ export default function useWebRTCAudioSession(
   async function startSession() {
     try {
       setStatus("Requesting microphone access...");
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: {
-        noiseSuppression: true,
-        echoCancellation: true,
-        autoGainControl: true,
-      } });
-      
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          noiseSuppression: true,
+          echoCancellation: true,
+          autoGainControl: true,
+        }
+      });
+
       audioStreamRef.current = stream;
       setupAudioVisualization(stream);
 
@@ -435,7 +437,7 @@ export default function useWebRTCAudioSession(
 
       // Send SDP offer to OpenAI Realtime
       const baseUrl = "https://api.openai.com/v1/realtime";
-      const model = "gpt-4o-mini-realtime-preview-2024-12-17";
+      const model = "gpt-4o-realtime-preview-2024-12-17";
       const response = await fetch(`${baseUrl}?model=${model}&voice=${voice}`, {
         method: "POST",
         body: offer.sdp,
@@ -517,7 +519,7 @@ export default function useWebRTCAudioSession(
     }
 
     const messageId = uuidv4();
-    
+
     // Add message to conversation immediately
     const newMessage: Conversation = {
       id: messageId,
@@ -527,7 +529,7 @@ export default function useWebRTCAudioSession(
       isFinal: true,
       status: "final",
     };
-    
+
     setConversation(prev => [...prev, newMessage]);
 
     // Send message through data channel
@@ -548,9 +550,10 @@ export default function useWebRTCAudioSession(
     const response = {
       type: "response.create",
     };
-    
+
     dataChannelRef.current.send(JSON.stringify(message));
-    dataChannelRef.current.send(JSON.stringify(response));}
+    dataChannelRef.current.send(JSON.stringify(response));
+  }
 
   // Cleanup on unmount
   useEffect(() => {

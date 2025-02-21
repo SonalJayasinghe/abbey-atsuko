@@ -17,24 +17,21 @@ const App: React.FC = () => {
   const [videoSrc, setVideoSrc] = useState<string[]>(["/videos/bored.mp4"]);
   const [videoIndex, setVideoIndex] = useState(0);
 
-
   const handleStartStopClickWithFullScreen = () => {
-  
-  const videoElement = document.querySelector("video");
-  if (videoElement) {
-    videoElement.controls = false;
-    if (videoElement.requestFullscreen) {
-      videoElement.requestFullscreen();
-    } else if ((videoElement as any).mozRequestFullScreen) { 
-      (videoElement as any).mozRequestFullScreen();
-    } else if ((videoElement as any).webkitRequestFullscreen) { 
-      (videoElement as any).webkitRequestFullscreen();
-    } else if ((videoElement as any).msRequestFullscreen) {
-      (videoElement as any).msRequestFullscreen();
+    const videoElement = document.querySelector("video");
+    if (videoElement) {
+      videoElement.controls = false;
+      if (videoElement.requestFullscreen) {
+        videoElement.requestFullscreen();
+      } else if ((videoElement as any).mozRequestFullScreen) {
+        (videoElement as any).mozRequestFullScreen();
+      } else if ((videoElement as any).webkitRequestFullscreen) {
+        (videoElement as any).webkitRequestFullscreen();
+      } else if ((videoElement as any).msRequestFullscreen) {
+        (videoElement as any).msRequestFullscreen();
+      }
     }
-  }
-};
-
+  };
 
   // volume bug here
   useEffect(() => {
@@ -143,7 +140,6 @@ const App: React.FC = () => {
             handleStartStopClick();
             !isSessionActive && handleStartStopClickWithFullScreen();
           }}
-          
         />
       </div>
       <div className="flex flex-col items-center gap-4">
@@ -157,5 +153,3 @@ const App: React.FC = () => {
 };
 
 export default App;
-
-

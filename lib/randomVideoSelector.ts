@@ -22,7 +22,7 @@ export function videoSelector(statement: string):string[] {
         return ["/videos/pointingforward.mp4", "/videos/pointingright.mp4", "/videos/talking3.mp4"];
     }
 
-    else if(statement.toLowerCase().includes("sky cafe")){
+    else if(statement.toLowerCase().includes("sky cafe") || statement.toLowerCase().includes("skycafe")){
         return ["/videos/pointingforward.mp4", "/videos/talking3.mp4"];
     }
 

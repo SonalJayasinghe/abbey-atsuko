@@ -9,12 +9,15 @@ const App: React.FC = () => {
   // State for voice selection
   const silenceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const preloadRef = useRef<HTMLVideoElement | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const [latestUserStatement, setLatestUserStatement] = useState<string | null>(null);
 
   // WebRTC Audio Session Hook
   const { isSessionActive, handleStartStopClick, conversation, currentVolume } =
     useWebRTCAudioSession("alloy");
 
-  const [videoSrc, setVideoSrc] = useState<string[]>(["/videos/bored.mp4"]);
+  const [videoSrc, setVideoSrc] = useState<string[]>(["/videos/bored.mp4","/videos/standingidle.mp4"]);
   const [videoIndex, setVideoIndex] = useState(0);
 
   const handleStartStopClickWithFullScreen = () => {
@@ -33,12 +36,17 @@ const App: React.FC = () => {
     }
   };
 
-  // volume bug here
-  useEffect(() => {
-    const threshold = 0.0005;
-    const silenceDuration = 900;
+  
+  const volumeHistorySize = 2;
+  const [volumeHistory, setVolumeHistory] = useState<number[]>([]);
 
-    if (currentVolume > threshold) {
+  useEffect(() => {
+    const threshold = 0.001;
+    const silenceDuration = 50;
+
+    setVolumeHistory((prev) => [...prev.slice(-volumeHistorySize + 1), currentVolume]);
+    const avgVolume = volumeHistory.reduce((sum, v) => sum + v, 0) / (volumeHistory.length || 1);
+    if (avgVolume > threshold) {
       if (!isSpeaking) {
         setIsSpeaking(true);
       }
@@ -60,62 +68,50 @@ const App: React.FC = () => {
         setIsSpeaking(false);
       }
     }
-  }, [currentVolume, conversation]);
+  }, [currentVolume]);
 
-  const latestFinalUserMessage = useMemo(() => {
-    return conversation
-      .filter(
-        (msg) =>
-          msg.role === "user" && msg.isFinal && msg.status !== "processing"
-      )
-      .slice(-1)[0];
+
+  useEffect(() => {
+    const text = conversation
+    .filter((msg) => msg.role === "user" && msg.isFinal && msg.status === "final")
+    .slice(-1)[0];
+
+  if (text && text.text != latestUserStatement) {
+    setLatestUserStatement((prev) => (prev !== text.text ? text.text : prev));
+  }
   }, [conversation]);
 
+
   useEffect(() => {
-    const videoElement = document.querySelector("video");
-    if (videoElement) {
-      if (isSessionActive === false) {
-        videoElement.classList.add("fade-out");
+    if (!videoRef.current) return;
+    let newVideoSrc;
+
+    if (isSessionActive) {
+      newVideoSrc = isSpeaking
+        ? videoSelector(latestUserStatement || "") 
+        : ["/videos/listen.mp4"];   
+    } else {
+      newVideoSrc = ["/videos/bored.mp4", "/videos/standingidle.mp4"];
+      setLatestUserStatement(null);
+      setIsSpeaking(false);
+      setVolumeHistory([]);
+    }
+  
+    setVideoSrc(newVideoSrc);
+    setVideoIndex(0);
+  
+    const videoElement = videoRef.current;
+    videoElement.src = newVideoSrc[0];
+    videoElement.load(); 
+    videoElement.classList.add("fade-out");
         setTimeout(() => {
-          setVideoSrc(["/videos/bored.mp4", "/videos/standingidle.mp4"]);
-          setVideoIndex(0);
           videoElement.classList.remove("fade-out");
-        }, 400);
-      } else {
-        if (isSpeaking) {
-          setTimeout(() => {
-            if (latestFinalUserMessage === undefined) return;
-            const paths = videoSelector(latestFinalUserMessage.text);
-            videoElement.classList.add("fade-out");
-            setVideoSrc(paths || videoSrc);
-            setVideoIndex(0);
-            videoElement.classList.remove("fade-out");
-          }, 400);
-        } else {
-          videoElement.classList.add("fade-out");
-          setTimeout(() => {
-            setVideoSrc(["/videos/listen.mp4", "/videos/listen.mp4"]);
-            setVideoIndex(0);
-            videoElement.classList.remove("fade-out");
-          }, 400);
-        }
-      }
-    }
-  }, [isSessionActive, latestFinalUserMessage, isSpeaking]);
+        }, 200);
+    videoElement.play();
+  }, [isSessionActive, isSpeaking]);
+  
 
-  //Play video on load
-  useEffect(() => {
-    const videoElement = document.querySelector("video");
 
-    if (videoElement) {
-      videoElement.load();
-      const prom = videoElement.play();
-
-      if (prom !== undefined) {
-        prom.then(() => {}).catch(() => {});
-      }
-    }
-  }, [videoSrc, videoIndex]);
 
   //Video transition in same video src list
   useEffect(() => {
@@ -124,12 +120,20 @@ const App: React.FC = () => {
       videoElement.onended = () => {
         videoElement.classList.add("fade-out");
         setTimeout(() => {
-          setVideoIndex((prevIndex) => (prevIndex + 1) % videoSrc.length);
           videoElement.classList.remove("fade-out");
-        }, 400);
+        }, 200);
       };
     }
   });
+
+    // Preload next video
+    useEffect(() => {
+      if (preloadRef.current) {
+        const nextIndex = (videoIndex + 1) % videoSrc.length; 
+        preloadRef.current.src = videoSrc[nextIndex];
+        preloadRef.current.load();
+      }
+    }, [videoIndex, videoSrc]);
 
   return (
     <main className="h-full">
@@ -143,10 +147,28 @@ const App: React.FC = () => {
         />
       </div>
       <div className="flex flex-col items-center gap-4">
-        <video width="1080" height="1080" autoPlay muted preload="auto">
+      <video
+          ref={videoRef}
+          width="1080"
+          height="1080"
+          autoPlay
+          muted
+          preload="auto"
+          onEnded={() => {
+           
+            const nextIndex = (videoIndex + 1) % videoSrc.length; 
+            if (videoRef.current && preloadRef.current) {
+              videoRef.current.src = preloadRef.current.src; 
+              videoRef.current.play();
+            }
+            setVideoIndex(nextIndex);
+          }}
+        >
           <source src={videoSrc[videoIndex]} type="video/mp4" />
-          Your browser does not support the video tag.
         </video>
+
+        <video ref={preloadRef} style={{ display: "none" }} preload="auto" />
+      
       </div>
     </main>
   );

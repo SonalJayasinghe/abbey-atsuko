@@ -83,6 +83,7 @@ export default function useWebRTCAudioSession(
         tools: tools || [],
         input_audio_transcription: {
           model: "whisper-1",
+          language: "en",
         },
       },
     };

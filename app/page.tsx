@@ -33,12 +33,20 @@ const App: React.FC = () => {
     }
   };
 
-  // volume bug here
-  useEffect(() => {
-    const threshold = 0.0005;
-    const silenceDuration = 900;
+  
+  const volumeHistorySize = 5;
+const [volumeHistory, setVolumeHistory] = useState<number[]>([]);
 
-    if (currentVolume > threshold) {
+
+  useEffect(() => {
+    const threshold = 0.001;
+    const silenceDuration = 800;
+
+    setVolumeHistory((prev) => [...prev.slice(-volumeHistorySize + 1), currentVolume]);
+    const avgVolume = volumeHistory.reduce((sum, v) => sum + v, 0) / (volumeHistory.length || 1);
+    console.log(avgVolume, isSpeaking);
+
+    if (avgVolume > threshold) {
       if (!isSpeaking) {
         setIsSpeaking(true);
       }
@@ -61,6 +69,7 @@ const App: React.FC = () => {
       }
     }
   }, [currentVolume, conversation]);
+
 
   const latestFinalUserMessage = useMemo(() => {
     return conversation

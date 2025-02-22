@@ -9,13 +9,11 @@ const thankfulPaths = [
     "/videos/talking1.mp4",
 ]
 
-export function videoSelector(statement: string):string[] | null {
-
+export function videoSelector(statement: string):string[] {
     if(statement.trim() === ""){
         return shuffleDefaultTalk();
     }
     
-    console.log("statement", statement);
     if(statement.toLowerCase().includes("thank")){
         return thankfulPaths;
     }

@@ -11,7 +11,7 @@ const App: React.FC = () => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const preloadRef = useRef<HTMLVideoElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
-
+  const [latestUserStatement, setLatestUserStatement] = useState<string | null>(null);
 
   // WebRTC Audio Session Hook
   const { isSessionActive, handleStartStopClick, conversation, currentVolume } =
@@ -71,52 +71,44 @@ const App: React.FC = () => {
   }, [currentVolume]);
 
 
-  const latestFinalUserMessage = useMemo(() => {
-    return conversation
-      .filter(
-        (msg) =>
-          msg.role === "user" && msg.isFinal
-      )
-      .slice(-1)[0];
-  }, [conversation]);
+  useEffect(() => {
+    const text = conversation
+    .filter((msg) => msg.role === "user" && msg.isFinal)
+    .slice(-1)[0];
 
-  // useEffect(() => {
-  //   console.log("is AI speaking", isSpeaking);
-  //   const videoElement = document.querySelector("video");
-  //   if (videoElement) {
-  //     if (isSessionActive === false) {
-  //       videoElement.classList.add("fade-out");
-  //       setTimeout(() => {
-  //         setVideoSrc(["/videos/bored.mp4", "/videos/standingidle.mp4"]);
-  //         setVideoIndex(0);
-  //         videoElement.classList.remove("fade-out");
-  //       }, 400);
-  //     } else {
-  //       if (isSpeaking) {
-  //         setTimeout(() => {
-  //           if (latestFinalUserMessage === undefined) return;
-  //           const paths = videoSelector(latestFinalUserMessage.text);
-  //           videoElement.classList.add("fade-out");
-  //           setVideoSrc(paths || videoSrc);
-  //           setVideoIndex(0);
-  //           videoElement.classList.remove("fade-out");
-  //         }, 400);
-  //       } else {
-  //         videoElement.classList.add("fade-out");
-  //         setTimeout(() => {
-  //           setVideoSrc(["/videos/listen.mp4", "/videos/listen.mp4"]);
-  //           setVideoIndex(0);
-  //           videoElement.classList.remove("fade-out");
-  //         }, 400);
-  //       }
-  //     }
-  //   }
-  // }, [isSessionActive, latestFinalUserMessage, isSpeaking]);
+  if (text && text.text !== latestUserStatement) {
+    setLatestUserStatement(text.text); 
+  }
+  }, [conversation]);
 
 
   useEffect(() => {
-    console.log("is AI speaking", isSpeaking);
-  }, [isSpeaking]);
+    if (!videoRef.current) return;
+    let newVideoSrc;
+
+    if (isSessionActive) {
+      newVideoSrc = isSpeaking
+        ? videoSelector(latestUserStatement || "") 
+        : ["/videos/listen.mp4"];   
+    } else {
+      newVideoSrc = ["/videos/bored.mp4", "/videos/standingidle.mp4"]; 
+    }
+  
+    setVideoSrc(newVideoSrc);
+    setVideoIndex(0);
+  
+    const videoElement = videoRef.current;
+    videoElement.src = newVideoSrc[0];
+    videoElement.load(); 
+    videoElement.classList.add("fade-out");
+        setTimeout(() => {
+          videoElement.classList.remove("fade-out");
+        }, 200);
+    videoElement.play();
+  }, [isSessionActive, isSpeaking]);
+  
+
+
 
   //Video transition in same video src list
   useEffect(() => {

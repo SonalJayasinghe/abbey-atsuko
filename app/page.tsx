@@ -9,12 +9,15 @@ const App: React.FC = () => {
   // State for voice selection
   const silenceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const preloadRef = useRef<HTMLVideoElement | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
 
   // WebRTC Audio Session Hook
   const { isSessionActive, handleStartStopClick, conversation, currentVolume } =
     useWebRTCAudioSession("alloy");
 
-  const [videoSrc, setVideoSrc] = useState<string[]>(["/videos/bored.mp4"]);
+  const [videoSrc, setVideoSrc] = useState<string[]>(["/videos/bored.mp4","/videos/standingidle.mp4"]);
   const [videoIndex, setVideoIndex] = useState(0);
 
   const handleStartStopClickWithFullScreen = () => {
@@ -34,18 +37,15 @@ const App: React.FC = () => {
   };
 
   
-  const volumeHistorySize = 5;
-const [volumeHistory, setVolumeHistory] = useState<number[]>([]);
-
+  const volumeHistorySize = 2;
+  const [volumeHistory, setVolumeHistory] = useState<number[]>([]);
 
   useEffect(() => {
     const threshold = 0.001;
-    const silenceDuration = 800;
+    const silenceDuration = 50;
 
     setVolumeHistory((prev) => [...prev.slice(-volumeHistorySize + 1), currentVolume]);
     const avgVolume = volumeHistory.reduce((sum, v) => sum + v, 0) / (volumeHistory.length || 1);
-    console.log(avgVolume, isSpeaking);
-
     if (avgVolume > threshold) {
       if (!isSpeaking) {
         setIsSpeaking(true);
@@ -68,63 +68,55 @@ const [volumeHistory, setVolumeHistory] = useState<number[]>([]);
         setIsSpeaking(false);
       }
     }
-  }, [currentVolume, conversation]);
+  }, [currentVolume]);
 
 
   const latestFinalUserMessage = useMemo(() => {
     return conversation
       .filter(
         (msg) =>
-          msg.role === "user" && msg.isFinal && msg.status !== "processing"
+          msg.role === "user" && msg.isFinal
       )
       .slice(-1)[0];
   }, [conversation]);
 
+  // useEffect(() => {
+  //   console.log("is AI speaking", isSpeaking);
+  //   const videoElement = document.querySelector("video");
+  //   if (videoElement) {
+  //     if (isSessionActive === false) {
+  //       videoElement.classList.add("fade-out");
+  //       setTimeout(() => {
+  //         setVideoSrc(["/videos/bored.mp4", "/videos/standingidle.mp4"]);
+  //         setVideoIndex(0);
+  //         videoElement.classList.remove("fade-out");
+  //       }, 400);
+  //     } else {
+  //       if (isSpeaking) {
+  //         setTimeout(() => {
+  //           if (latestFinalUserMessage === undefined) return;
+  //           const paths = videoSelector(latestFinalUserMessage.text);
+  //           videoElement.classList.add("fade-out");
+  //           setVideoSrc(paths || videoSrc);
+  //           setVideoIndex(0);
+  //           videoElement.classList.remove("fade-out");
+  //         }, 400);
+  //       } else {
+  //         videoElement.classList.add("fade-out");
+  //         setTimeout(() => {
+  //           setVideoSrc(["/videos/listen.mp4", "/videos/listen.mp4"]);
+  //           setVideoIndex(0);
+  //           videoElement.classList.remove("fade-out");
+  //         }, 400);
+  //       }
+  //     }
+  //   }
+  // }, [isSessionActive, latestFinalUserMessage, isSpeaking]);
+
+
   useEffect(() => {
-    const videoElement = document.querySelector("video");
-    if (videoElement) {
-      if (isSessionActive === false) {
-        videoElement.classList.add("fade-out");
-        setTimeout(() => {
-          setVideoSrc(["/videos/bored.mp4", "/videos/standingidle.mp4"]);
-          setVideoIndex(0);
-          videoElement.classList.remove("fade-out");
-        }, 400);
-      } else {
-        if (isSpeaking) {
-          setTimeout(() => {
-            if (latestFinalUserMessage === undefined) return;
-            const paths = videoSelector(latestFinalUserMessage.text);
-            videoElement.classList.add("fade-out");
-            setVideoSrc(paths || videoSrc);
-            setVideoIndex(0);
-            videoElement.classList.remove("fade-out");
-          }, 400);
-        } else {
-          videoElement.classList.add("fade-out");
-          setTimeout(() => {
-            setVideoSrc(["/videos/listen.mp4", "/videos/listen.mp4"]);
-            setVideoIndex(0);
-            videoElement.classList.remove("fade-out");
-          }, 400);
-        }
-      }
-    }
-  }, [isSessionActive, latestFinalUserMessage, isSpeaking]);
-
-  //Play video on load
-  useEffect(() => {
-    const videoElement = document.querySelector("video");
-
-    if (videoElement) {
-      videoElement.load();
-      const prom = videoElement.play();
-
-      if (prom !== undefined) {
-        prom.then(() => {}).catch(() => {});
-      }
-    }
-  }, [videoSrc, videoIndex]);
+    console.log("is AI speaking", isSpeaking);
+  }, [isSpeaking]);
 
   //Video transition in same video src list
   useEffect(() => {
@@ -133,12 +125,20 @@ const [volumeHistory, setVolumeHistory] = useState<number[]>([]);
       videoElement.onended = () => {
         videoElement.classList.add("fade-out");
         setTimeout(() => {
-          setVideoIndex((prevIndex) => (prevIndex + 1) % videoSrc.length);
           videoElement.classList.remove("fade-out");
-        }, 400);
+        }, 200);
       };
     }
   });
+
+    // Preload next video
+    useEffect(() => {
+      if (preloadRef.current) {
+        const nextIndex = (videoIndex + 1) % videoSrc.length; 
+        preloadRef.current.src = videoSrc[nextIndex];
+        preloadRef.current.load();
+      }
+    }, [videoIndex, videoSrc]);
 
   return (
     <main className="h-full">
@@ -152,10 +152,28 @@ const [volumeHistory, setVolumeHistory] = useState<number[]>([]);
         />
       </div>
       <div className="flex flex-col items-center gap-4">
-        <video width="1080" height="1080" autoPlay muted preload="auto">
+      <video
+          ref={videoRef}
+          width="1080"
+          height="1080"
+          autoPlay
+          muted
+          preload="auto"
+          onEnded={() => {
+           
+            const nextIndex = (videoIndex + 1) % videoSrc.length; 
+            if (videoRef.current && preloadRef.current) {
+              videoRef.current.src = preloadRef.current.src; 
+              videoRef.current.play();
+            }
+            setVideoIndex(nextIndex);
+          }}
+        >
           <source src={videoSrc[videoIndex]} type="video/mp4" />
-          Your browser does not support the video tag.
         </video>
+
+        <video ref={preloadRef} style={{ display: "none" }} preload="auto" />
+      
       </div>
     </main>
   );

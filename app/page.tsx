@@ -73,11 +73,11 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const text = conversation
-    .filter((msg) => msg.role === "user" && msg.isFinal)
+    .filter((msg) => msg.role === "user" && msg.isFinal && msg.status === "final")
     .slice(-1)[0];
 
-  if (text && text.text !== latestUserStatement) {
-    setLatestUserStatement(text.text); 
+  if (text && text.text != latestUserStatement) {
+    setLatestUserStatement((prev) => (prev !== text.text ? text.text : prev));
   }
   }, [conversation]);
 
@@ -91,7 +91,10 @@ const App: React.FC = () => {
         ? videoSelector(latestUserStatement || "") 
         : ["/videos/listen.mp4"];   
     } else {
-      newVideoSrc = ["/videos/bored.mp4", "/videos/standingidle.mp4"]; 
+      newVideoSrc = ["/videos/bored.mp4", "/videos/standingidle.mp4"];
+      setLatestUserStatement(null);
+      setIsSpeaking(false);
+      setVolumeHistory([]);
     }
   
     setVideoSrc(newVideoSrc);

@@ -277,6 +277,53 @@ Qualifications: B.Sc.(Hons)(Computer Science)(USJ, Sri Lanka)
 Fields of Interest: Cloud Computing and Virtualization, Image Processing
 Email: tmembuldeniya@sjp.ac.lk
 
+Mr. D. A. P. Peiris
+(Instructor - Computer Technology)
+Qualifications: B.Sc.(USJ, Sri Lanka), M.Sc. (Comp. Sci.)(USJ, Sri Lanka)
+Email: asanka@sci.sjp.ac.lk
+ 
+------
+
+Ms. M.C. Weerawardana
+(Instructor - Computer Technology)
+Qualifications: B.Sc.(Hons)(Comp. Sci.)(UOK, Sri Lanka)
+Email: chanduwm88@gmail.com
+
+------
+
+Mr. Naveen Avishka Livera
+(Temporary Instructor)
+Qualifications: B.Sc.(Computer Science)(USJ, Sri Lanka)
+Email: naveen.livera@gmail.com
+ 
+------
+
+Ms.Tharundi Dunuwila
+(Temporary Instructor)
+Qualifications: B.Sc. Physical Science (ICT)(USJ, Sri Lanka)
+Email: tharundi.dunuwila@gmail.com
+
+------
+
+Ms. N. Hirusha Wanigasingha
+(Temporary Instructor)
+Qualifications: B.Sc.(Hons)(Computer Science)(USJ, Sri Lanka)
+Email: hirushanethni@sjp.ac.lk
+ 
+Ms. W. G. Lavanka Harshani
+(Temporary Instructor)
+Qualifications: B.Sc.(Hons)(Computer Science)(USJ, Sri Lanka)
+Email: lavankaharshani@sjp.ac.lk
+ 
+------
+
+Mr. J.D.K.N. Jayakodi
+(Temporary Instructor)
+Qualifications: B.Sc. (USJ, Sri Lanka), M.Sc. (Computer Science) (USJ, Sri Lanka (Reading))
+Email: kavindujd1995@gmail.com
+
+------
+
 5.1. Identify what information the student is asking for.
 5.2. Collect the information from the above list.
 5.3. Provide the information in a clear and concise manner in shortest possible way.
